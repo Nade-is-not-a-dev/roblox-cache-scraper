@@ -1,3 +1,4 @@
+import hashlib
 """Certificate generation for TLS MITM interception.
 
 Generates a local CA and per-host leaf certificates using the cryptography library.
@@ -88,9 +89,13 @@ def generate_multi_host_cert(
     """Generate a leaf certificate covering all given hosts."""
     ca_dir.mkdir(parents=True, exist_ok=True)
     hosts = sorted({str(h).strip().lower() for h in hosts if str(h).strip()})
-    name = '_'.join(h.replace('.', '_') for h in hosts)
-    cert_path = ca_dir / f'{name}.crt'
-    key_path = ca_dir / f'{name}.key'
+    # CN is limited to 64 chars by RFC 5280, so use a short fixed name.
+    # SAN (Subject Alternative Name) carries the actual host list.
+    cn = 'RobloxCacheScraper Proxy'
+    # Use a hash of the joined hosts for a unique but short filename
+    host_hash = hashlib.sha256('_'.join(hosts).encode()).hexdigest()[:16]
+    cert_path = ca_dir / f'leaf_{host_hash}.crt'
+    key_path = ca_dir / f'leaf_{host_hash}.key'
 
     x509, NameOID, hashes, serialization, rsa = _crypto()
     from cryptography.hazmat.primitives.serialization import load_pem_private_key
@@ -113,7 +118,7 @@ def generate_multi_host_cert(
 
     leaf_cert = (
         x509.CertificateBuilder()
-        .subject_name(x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, name)]))
+        .subject_name(x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, cn)]))
         .issuer_name(ca_cert.subject)
         .public_key(leaf_key.public_key())
         .serial_number(x509.random_serial_number())
