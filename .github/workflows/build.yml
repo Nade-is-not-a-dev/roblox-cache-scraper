@@ -29,8 +29,10 @@ jobs:
         with:
           enable-cache: true
 
-      - name: Set up Python
-        run: uv python install
+      - name: Set up Python and create virtualenv
+        run: |
+          uv python install
+          uv venv
 
       - name: Install dependencies
         run: uv pip install -r requirements.txt pyinstaller
