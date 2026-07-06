@@ -55,6 +55,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: RobloxCacheScraper-v${{ steps.version.outputs.app_version }}-Windows.exe
-          path: dist/RobloxCacheScraper-v*.exe
+          path: RobloxCacheScraper/dist/RobloxCacheScraper-v*.exe
           archive: false
           if-no-files-found: error
