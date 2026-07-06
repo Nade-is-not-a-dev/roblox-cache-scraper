@@ -1,0 +1,20 @@
+# Core dependencies
+cryptography>=42.0.0
+pyqt6>=6.8.0
+pyopengl>=3.1.0
+pillow>=11.0.0
+numpy>=2.0.0
+requests>=2.32.0
+orjson>=3.9.0
+
+# Audio playback
+sounddevice>=0.5.3
+soundfile>=0.13.1
+
+# Compression
+zstandard>=0.21.0
+lz4>=4.4.5
+
+# Misc
+python-dateutil>=2.9.0
+platformdirs>=4.0.0
